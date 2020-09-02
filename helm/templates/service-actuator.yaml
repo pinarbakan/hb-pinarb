@@ -1,0 +1,26 @@
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hello-app.fullname" . }}-actuator
+  labels:
+    {{- include "hello-app.labels" . | nindent 4 }}
+  {{- if or .Values.service.annotations (and .Values.metrics.enabled .Values.metrics.service.annotations) }}
+  annotations:
+    {{- if .Values.service.annotations }}
+    {{- include "nginx.tplValue" ( dict "value" .Values.service.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if and .Values.metrics.enabled .Values.metrics.service.annotations }}
+    {{- include "nginx.tplValue" ( dict "value" .Values.metrics.service.annotations "context" $) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.metrics.service.type }}
+  ports:
+    {{- if .Values.metrics.enabled }}
+    - name: actuatorhttp
+      port: {{ .Values.metrics.service.port }}
+    {{- end }}
+  selector:
+    {{- include "hello-app.selectorLabels" . | nindent 4 }}
+  {{- end }}

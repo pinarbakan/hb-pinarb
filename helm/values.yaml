@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: pinarbakan/app
-  tag: v1
+  tag: #{IMAGETAG}#
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
